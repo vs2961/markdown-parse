@@ -25,7 +25,7 @@ public class MarkdownParse {
 
             int markdownCheck = nextCloseBracket + 1;
 
-            if (markdown.charAt(markdownCheck) == '(') {
+            if (markdownCheck < markdown.length() && markdown.charAt(markdownCheck) == '(') {
                 int openParen = markdown.indexOf("(", markdownCheck);
                 int closeParen = markdown.indexOf(")", openParen);
                 if (openParen == -1 || closeParen == -1) {
