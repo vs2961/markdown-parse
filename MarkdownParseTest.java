@@ -9,7 +9,7 @@ import java.util.List;
 public class MarkdownParseTest {
     @Test
     public void addition() {
-        assertEquals(25, 1 + 1);
+        assertEquals(2, 1 + 1);
     }
 
     // Test getLinks on the given test file
@@ -111,7 +111,15 @@ public class MarkdownParseTest {
         Path file = Path.of("test-file8.md");
         String contents = Files.readString(file);
 
-        List<String> expected = List.of("a link on the first line");
+        List<String> expected = List.of();
+        assertEquals(MarkdownParse.getLinks(contents), expected);
+    }
+    @Test
+    public void testOwnFive() throws IOException {
+        Path file = Path.of("test-file-5.md");
+        String contents = Files.readString(file);
+
+        List<String> expected = List.of("inside");
         assertEquals(MarkdownParse.getLinks(contents), expected);
     }
 }
