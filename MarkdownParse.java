@@ -30,7 +30,7 @@ public class MarkdownParse {
                 if (openParen == -1 || closeParen == -1) {
                     break;
                 }
-                String toAdd = markdown.substring(openParen + 1, closeParen);
+                String toAdd = markdown.substring(openParen + 1, closeParen).trim();
                 if (!toAdd.contains(" ")) {
                     toReturn.add(toAdd);
                     currentIndex = closeParen + 1;
