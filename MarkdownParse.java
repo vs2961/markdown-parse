@@ -5,49 +5,45 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+import org.commonmark.node.*;
+import org.commonmark.parser.Parser;
+
 public class MarkdownParse {
-    public static ArrayList<String> getLinks(String markdown) {
-        ArrayList<String> toReturn = new ArrayList<>();
-        int currentIndex = 0;
-        while(currentIndex < markdown.length()) {
-            int nextOpenBracket = markdown.indexOf("[", currentIndex);
-            int nextCloseBracket = markdown.indexOf("]", nextOpenBracket);
 
-            if (nextOpenBracket == -1 || nextCloseBracket == -1) {
-                break;
-            }
+    public static ArrayList<String> getLinks(String contents) {
+        Parser parser = Parser.builder().build();
+        Node node = parser.parse(contents);
 
-            if (nextOpenBracket > 0 && markdown.charAt(nextOpenBracket - 1) == '!') {
-                currentIndex = nextOpenBracket + 1;
-                continue;
-            }
+        WordCountVisitor visitor = new WordCountVisitor();
+        node.accept(visitor);
 
-            int markdownCheck = nextCloseBracket + 1;
-
-            if (markdownCheck < markdown.length() && markdown.charAt(markdownCheck) == '(') {
-                int openParen = markdown.indexOf("(", markdownCheck);
-                int closeParen = markdown.indexOf(")", openParen);
-                if (openParen == -1 || closeParen == -1) {
-                    break;
-                }
-                String toAdd = markdown.substring(openParen + 1, closeParen).trim();
-                if (!toAdd.contains(" ")) {
-                    toReturn.add(toAdd);
-                    currentIndex = closeParen + 1;
-                } else {
-                    currentIndex = openParen + 1;
-                }
-            }
-            else {
-                currentIndex = markdownCheck;
-            }
-        }
-        return toReturn;
+        return visitor.res;
     }
     public static void main(String[] args) throws IOException {
+        
+
 		Path fileName = Path.of(args[0]);
 	    String contents = Files.readString(fileName);
-        ArrayList<String> links = getLinks(contents);
-        System.out.println(links);
+
+        System.out.println(getLinks(contents));
     }
 }
+
+class WordCountVisitor extends AbstractVisitor {
+    int wordCount = 0;
+    ArrayList<String> res = new ArrayList<>();
+
+    @Override
+        public void visit(Link link) {
+            // This is called for all Text nodes. Override other visit methods for other node types.
+
+            // Count words (this is just an example, don't actually do it this way for various reasons).
+            res.add(link.getDestination());
+            wordCount++;
+            //res.add();
+
+            // Descend into children (could be omitted in this case because Text nodes don't have children).
+            visitChildren(link);
+        }
+}
+
